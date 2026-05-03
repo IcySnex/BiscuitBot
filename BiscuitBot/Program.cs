@@ -44,7 +44,10 @@ public class Program
 			{
 				options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildUsers | GatewayIntents.GuildInvites;
 			});
-			builder.Services.AddApplicationCommands();
+			builder.Services.AddApplicationCommands(options =>
+			{
+				options.AutoRegisterCommands = true;
+			});
 
 			builder.Services.AddGatewayHandler<AutoRoleHandler>();
 			builder.Services.AddGatewayHandler<WelcomeHandler>();
