@@ -1,3 +1,54 @@
-﻿// See https://aka.ms/new-console-template for more information
+using System.Reflection;
+using BiscuitBot.Utils;
+using Microsoft.Extensions.Hosting;
+using NetCord.Hosting.Gateway;
+using NetCord.Hosting.Services;
+using NetCord.Hosting.Services.ApplicationCommands;
+using Serilog;
 
-Console.WriteLine("Hello, World!");
+namespace BiscuitBot;
+
+public class Program
+{
+	public static async Task Main(
+		string[] args)
+	{
+		const string loggerTemplate = "[{Timestamp:HH:mm:ss} {Level:u3} {Class}] {Message:lj}{NewLine}{Exception}";
+		Log.Logger = new LoggerConfiguration()
+			.Enrich.With<SourceContextEnricher>()
+			.WriteTo.File(
+				"Logs/log-.txt",
+				rollingInterval: RollingInterval.Day,
+				retainedFileCountLimit: 5,
+				outputTemplate: loggerTemplate)
+			.WriteTo.Console(
+				outputTemplate: loggerTemplate)
+			.CreateLogger();
+
+		try
+		{
+			Log.Information("Starting BiscuitBot...");
+
+			HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+			builder.Services.AddSerilog();
+
+			builder.Services.AddDiscordGateway();
+			builder.Services.AddApplicationCommands();
+
+			IHost host = builder.Build();
+
+			host.AddModules(Assembly.GetExecutingAssembly());
+
+			await host.RunAsync();
+		}
+		catch (Exception exception)
+		{
+			Log.Fatal(exception, "Application terminated unexpectedly");
+		}
+		finally
+		{
+			await Log.CloseAndFlushAsync();
+		}
+	}
+}

@@ -1,6 +1,7 @@
 .vs/
 .idea/
 packages/
+GEMINI.md
 
 Development/
 
@@ -16,3 +17,5 @@ pnpm-debug.log*
 BiscuitBot/bin/
 BiscuitBot/obj/
 BiscuitBot/appsettings.json
+
+NetCord-source-readonly/
