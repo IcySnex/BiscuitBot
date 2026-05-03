@@ -1,3 +1,4 @@
+using BiscuitBot.Models;
 using BiscuitBot.Services;
 using Microsoft.Extensions.Logging;
 using NetCord;
@@ -15,7 +16,7 @@ public class AutoRoleModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Enable()
 	{
-		configService.Config.AutoRoleEnabled = true;
+		configService.GetConfig(Context.Guild!.Id).AutoRoleEnabled = true;
 		configService.Save();
 
 		logger.LogInformation("AutoRole feature enabled");
@@ -26,7 +27,7 @@ public class AutoRoleModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Disable()
 	{
-		configService.Config.AutoRoleEnabled = false;
+		configService.GetConfig(Context.Guild!.Id).AutoRoleEnabled = false;
 		configService.Save();
 
 		logger.LogInformation("AutoRole feature disabled");
@@ -38,8 +39,9 @@ public class AutoRoleModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Status()
 	{
-		string status = configService.Config.AutoRoleEnabled ? "Enabled" : "Disabled";
-		string role = configService.Config.AutoRoleRoleId.HasValue ? $"<@&{configService.Config.AutoRoleRoleId}>" : "None";
+		GuildConfig config = configService.GetConfig(Context.Guild!.Id);
+		string status = config.AutoRoleEnabled ? "Enabled" : "Disabled";
+		string role = config.AutoRoleRoleId.HasValue ? $"<@&{config.AutoRoleRoleId}>" : "None";
 
 		return $"AutoRole Status: {status}\nRole: {role}";
 	}
@@ -56,7 +58,7 @@ public class AutoRoleModule(
 		if (role.Managed)
 			return "You cannot set a managed role (e.g., bot or integration role) as an auto-role.";
 
-		configService.Config.AutoRoleRoleId = role.Id;
+		configService.GetConfig(Context.Guild!.Id).AutoRoleRoleId = role.Id;
 		configService.Save();
 
 		logger.LogInformation("AutoRole set to: {RoleName} ({RoleId})", role.Name, role.Id);

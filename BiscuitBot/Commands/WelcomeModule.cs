@@ -1,3 +1,4 @@
+using BiscuitBot.Models;
 using BiscuitBot.Services;
 using Microsoft.Extensions.Logging;
 using NetCord;
@@ -15,7 +16,7 @@ public class WelcomeModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Enable()
 	{
-		configService.Config.WelcomeEnabled = true;
+		configService.GetConfig(Context.Guild!.Id).WelcomeEnabled = true;
 		configService.Save();
 
 		logger.LogInformation("Welcome feature enabled");
@@ -26,7 +27,7 @@ public class WelcomeModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Disable()
 	{
-		configService.Config.WelcomeEnabled = false;
+		configService.GetConfig(Context.Guild!.Id).WelcomeEnabled = false;
 		configService.Save();
 
 		logger.LogInformation("Welcome feature disabled");
@@ -38,8 +39,9 @@ public class WelcomeModule(
 	[RequireUserPermissions<ApplicationCommandContext>(Permissions.Administrator)]
 	public string Status()
 	{
-		string status = configService.Config.WelcomeEnabled ? "Enabled" : "Disabled";
-		string channel = configService.Config.WelcomeChannelId.HasValue ? $"<#{configService.Config.WelcomeChannelId}>" : "None";
+		GuildConfig config = configService.GetConfig(Context.Guild!.Id);
+		string status = config.WelcomeEnabled ? "Enabled" : "Disabled";
+		string channel = config.WelcomeChannelId.HasValue ? $"<#{config.WelcomeChannelId}>" : "None";
 
 		return $"Welcome Status: {status}\nChannel: {channel}";
 	}
@@ -50,7 +52,7 @@ public class WelcomeModule(
 	public string Set(
 		TextGuildChannel channel)
 	{
-		configService.Config.WelcomeChannelId = channel.Id;
+		configService.GetConfig(Context.Guild!.Id).WelcomeChannelId = channel.Id;
 		configService.Save();
 
 		logger.LogInformation("Welcome channel set to: {ChannelName} ({ChannelId})", channel.Name, channel.Id);

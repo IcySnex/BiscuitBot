@@ -1,3 +1,4 @@
+using BiscuitBot.Models;
 using BiscuitBot.Services;
 using BiscuitBot.Utils;
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,17 @@ public class WelcomeHandler(
 	ConfigService configService,
 	RestClient restClient,
 	GatewayClient gatewayClient,
+	InviteService inviteService,
 	ILogger<WelcomeHandler> logger) : IGuildUserAddGatewayHandler
 {
 	public async ValueTask HandleAsync(
 		GuildUser user)
 	{
-		if (!configService.Config.WelcomeEnabled)
+		GuildConfig config = configService.GetConfig(user.GuildId);
+		if (!config.WelcomeEnabled)
 			return;
 		
-		if (!configService.Config.WelcomeChannelId.HasValue)
+		if (!config.WelcomeChannelId.HasValue)
 		{
 			logger.LogWarning("Welcome channel has not been set");
 			return;
@@ -34,6 +37,11 @@ public class WelcomeHandler(
 			if (gatewayClient.Cache.Guilds.TryGetValue(user.GuildId, out Guild? guild))
 				memberCount = guild.UserCount;
 
+			User? inviter = await inviteService.GetInviterAsync(user.GuildId);
+
+			if (user.JoinedAt.HasValue)
+				inviteService.TrackMember(user.GuildId, user.Id, inviter?.Id, user.JoinedAt.Value);
+
 			EmbedProperties embed = new()
 			{
 				Title = null,
@@ -41,9 +49,9 @@ public class WelcomeHandler(
 				Color = new(190, 173, 255),
 				Fields =
 				[
-					new() { Name = "Account Created:", Value = $"<t:{user.CreatedAt.ToUnixTimeSeconds()}:D>" },
-					new() { Name = "Account Joined:", Value = user.JoinedAt.HasValue ? $"<t:{user.JoinedAt.Value.ToUnixTimeSeconds()}:D>" : "Unknown" },
-					new() { Name = "Invited By:", Value = "Unknown" },
+					new() { Name = "Account Created:", Value = $"<t:{user.CreatedAt.ToUnixTimeSeconds()}:f>" },
+					new() { Name = "Account Joined:", Value = user.JoinedAt.HasValue ? $"<t:{user.JoinedAt.Value.ToUnixTimeSeconds()}:f>" : "Unknown" },
+					new() { Name = "Invited By:", Value = inviter is not null ? inviter.ToString() : "Unknown" },
 				],
 				Footer = new()
 				{
@@ -57,11 +65,11 @@ public class WelcomeHandler(
 				Embeds = [embed]
 			};
 
-			await restClient.SendMessageAsync(configService.Config.WelcomeChannelId.Value, message);
+			await restClient.SendMessageAsync(config.WelcomeChannelId.Value, message);
 		}
 		catch (Exception exception)
 		{
-			logger.LogError(exception, "Failed to send welcome message to channel {ChannelId}", configService.Config.WelcomeChannelId.Value);
+			logger.LogError(exception, "Failed to send welcome message to channel {ChannelId}", config.WelcomeChannelId.Value);
 		}
 	}
 }

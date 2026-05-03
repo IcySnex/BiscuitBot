@@ -38,16 +38,18 @@ public class Program
 			builder.Services.AddSerilog();
 			
 			builder.Services.AddSingleton<ConfigService>();
+			builder.Services.AddSingleton<InviteService>();
 
 			builder.Services.AddDiscordGateway(options =>
 			{
-				options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildUsers;
+				options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildUsers | GatewayIntents.GuildInvites;
 			});
 			builder.Services.AddApplicationCommands();
 
 			builder.Services.AddGatewayHandler<AutoRoleHandler>();
 			builder.Services.AddGatewayHandler<WelcomeHandler>();
 			builder.Services.AddGatewayHandler<LeaveHandler>();
+			builder.Services.AddGatewayHandler<InviteHandler>();
 
 			IHost host = builder.Build();
 

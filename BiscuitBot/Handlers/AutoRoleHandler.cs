@@ -1,3 +1,4 @@
+using BiscuitBot.Models;
 using BiscuitBot.Services;
 using NetCord.Hosting.Gateway;
 using Microsoft.Extensions.Logging;
@@ -12,13 +13,14 @@ public class AutoRoleHandler(
 	public async ValueTask HandleAsync(
 		GuildUser user)
 	{
-		if (!configService.Config.AutoRoleEnabled || !configService.Config.AutoRoleRoleId.HasValue)
+		GuildConfig config = configService.GetConfig(user.GuildId);
+		if (!config.AutoRoleEnabled || !config.AutoRoleRoleId.HasValue)
 			return;
 
 		try
 		{
-			logger.LogInformation("Applying AutoRole {RoleId} to user {UserId} in guild {GuildId}", configService.Config.AutoRoleRoleId.Value, user.Id, user.GuildId);
-			await user.AddRoleAsync(configService.Config.AutoRoleRoleId.Value);
+			logger.LogInformation("Applying AutoRole {RoleId} to user {UserId} in guild {GuildId}", config.AutoRoleRoleId.Value, user.Id, user.GuildId);
+			await user.AddRoleAsync(config.AutoRoleRoleId.Value);
 		}
 		catch (Exception exception)
 		{

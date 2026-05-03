@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Text.Json;
 using BiscuitBot.Models;
 using BiscuitBot.Utils;
 using Microsoft.Extensions.Logging;
@@ -10,30 +12,58 @@ public class ConfigService(
 	const string ConfigPath = "config.json";
 	
 
-	public GuildConfig Config { get; } = Load();
+	readonly ConcurrentDictionary<ulong, GuildConfig> configs = Load(logger);
 
 
-	static GuildConfig Load()
+	static ConcurrentDictionary<ulong, GuildConfig> Load(
+		ILogger logger)
 	{
 		if (!File.Exists(ConfigPath))
-			return new();
+			return [];
 
 		try
 		{
+			logger.LogInformation("Reading config from {Path}", ConfigPath);
 			string json = File.ReadAllText(ConfigPath);
-			return JsonConverter.As<GuildConfig>(json);
+			Dictionary<string, GuildConfig>? rawData = JsonSerializer.Deserialize<Dictionary<string, GuildConfig>>(json);
+			
+			if (rawData is null)
+				return [];
+
+			ConcurrentDictionary<ulong, GuildConfig> result = [];
+			foreach (KeyValuePair<string, GuildConfig> pair in rawData)
+			{
+				if (ulong.TryParse(pair.Key, out ulong guildId))
+					result[guildId] = pair.Value;
+			}
+			return result;
 		}
-		catch
+		catch (Exception exception)
 		{
-			return new();
+			logger.LogError(exception, "Failed to load configuration.");
+			return [];
 		}
 	}
 	
+	public GuildConfig GetConfig(
+		ulong guildId)
+	{
+		return configs.GetOrAdd(
+			guildId,
+			_ => new());
+	}
+
 	public void Save()
 	{
 		try
 		{
-			string json = JsonConverter.AsString(Config);
+			logger.LogInformation("Saving config to {Path}", ConfigPath);
+			
+			Dictionary<string, GuildConfig> rawData = [];
+			foreach (KeyValuePair<ulong, GuildConfig> pair in configs)
+				rawData[pair.Key.ToString()] = pair.Value;
+
+			string json = JsonSerializer.Serialize(rawData);
 			File.WriteAllText(ConfigPath, json);
 		}
 		catch (Exception exception)
