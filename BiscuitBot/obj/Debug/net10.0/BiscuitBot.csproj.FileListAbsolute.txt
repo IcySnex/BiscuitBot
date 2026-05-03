@@ -1,0 +1,14 @@
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/bin/Debug/net10.0/BiscuitBot
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/bin/Debug/net10.0/BiscuitBot.deps.json
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/bin/Debug/net10.0/BiscuitBot.runtimeconfig.json
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/bin/Debug/net10.0/BiscuitBot.dll
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/bin/Debug/net10.0/BiscuitBot.pdb
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.GeneratedMSBuildEditorConfig.editorconfig
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.AssemblyInfoInputs.cache
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.AssemblyInfo.cs
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.csproj.CoreCompileInputs.cache
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.dll
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/refint/BiscuitBot.dll
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.pdb
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/BiscuitBot.genruntimeconfig.cache
+/Users/kevin/Repos/BiscuitBot/BiscuitBot/obj/Debug/net10.0/ref/BiscuitBot.dll
