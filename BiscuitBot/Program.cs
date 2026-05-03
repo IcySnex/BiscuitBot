@@ -1,6 +1,8 @@
 using System.Reflection;
 using BiscuitBot.Handlers;
+using BiscuitBot.Services;
 using BiscuitBot.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
@@ -36,8 +38,10 @@ public class Program
 
 			builder.Services.AddDiscordGateway();
 			builder.Services.AddApplicationCommands();
-			
+
+			builder.Services.AddSingleton<ConfigService>();
 			builder.Services.AddGatewayHandler<AutoRoleHandler>();
+			builder.Services.AddGatewayHandler<WelcomeHandler>();
 
 			IHost host = builder.Build();
 
