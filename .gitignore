@@ -1,0 +1,17 @@
+.vs/
+.idea/
+packages/
+
+Development/
+
+*.suo
+*.user
+*.DS_Store
+_ReSharper.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+BiscuitBot/bin/
+BiscuitBot/obj/
