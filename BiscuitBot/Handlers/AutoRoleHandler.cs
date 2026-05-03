@@ -12,13 +12,13 @@ public class AutoRoleHandler(
 	public async ValueTask HandleAsync(
 		GuildUser user)
 	{
-		if (!configService.Config.AutoRoleEnabled || !configService.Config.AutoRoleId.HasValue)
+		if (!configService.Config.AutoRoleEnabled || !configService.Config.AutoRoleRoleId.HasValue)
 			return;
 
 		try
 		{
-			logger.LogInformation("Applying AutoRole {RoleId} to user {UserId} in guild {GuildId}", configService.Config.AutoRoleId.Value, user.Id, user.GuildId);
-			await user.AddRoleAsync(configService.Config.AutoRoleId.Value);
+			logger.LogInformation("Applying AutoRole {RoleId} to user {UserId} in guild {GuildId}", configService.Config.AutoRoleRoleId.Value, user.Id, user.GuildId);
+			await user.AddRoleAsync(configService.Config.AutoRoleRoleId.Value);
 		}
 		catch (Exception exception)
 		{

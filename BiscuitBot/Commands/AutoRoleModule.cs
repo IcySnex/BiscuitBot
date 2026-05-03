@@ -39,7 +39,7 @@ public class AutoRoleModule(
 	public string Status()
 	{
 		string status = configService.Config.AutoRoleEnabled ? "Enabled" : "Disabled";
-		string role = configService.Config.AutoRoleId.HasValue ? $"<@&{configService.Config.AutoRoleId}>" : "None";
+		string role = configService.Config.AutoRoleRoleId.HasValue ? $"<@&{configService.Config.AutoRoleRoleId}>" : "None";
 
 		return $"AutoRole Status: {status}\nRole: {role}";
 	}
@@ -56,10 +56,10 @@ public class AutoRoleModule(
 		if (role.Managed)
 			return "You cannot set a managed role (e.g., bot or integration role) as an auto-role.";
 
-		configService.Config.AutoRoleId = role.Id;
+		configService.Config.AutoRoleRoleId = role.Id;
 		configService.Save();
 
 		logger.LogInformation("AutoRole set to: {RoleName} ({RoleId})", role.Name, role.Id);
-		return $"AutoRole set to: {role}";
+		return $"AutoRole role set to: {role}";
 	}
 }
