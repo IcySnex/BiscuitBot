@@ -1,5 +1,6 @@
 using BiscuitBot.Services;
 using Microsoft.Extensions.Logging;
+using NetCord;
 using NetCord.Gateway;
 using NetCord.Hosting.Gateway;
 using NetCord.Rest;
@@ -29,15 +30,20 @@ public class LeaveHandler(
 
 			EmbedProperties embed = new()
 			{
-				Title = "Goodbye!",
-				Description = $"{args.User.Username} has left the server. We'll miss you!",
-				Color = new(255, 0, 0),
-				Thumbnail = new(args.User.GetAvatarUrl()?.ToString()),
+				Title = null,
+				Description = $"**🖤 Goodbyee {args.User.Username}! 🖤**",
+				Color = new(0, 0, 0),
+				Fields =
+				[
+					new() { Name = "Account Created:", Value = $"<t:{args.User.CreatedAt.ToUnixTimeSeconds()}:D>" },
+					new() { Name = "Account Joined:", Value = "Unknown" },
+					new() { Name = "Invited By:", Value = "Unknown" },
+				],
 				Footer = new()
 				{
-					Text = $"User ID: {args.User.Id}"
+					Text = "🐺 We still hope you had a great time! 🐺"
 				},
-				Timestamp = DateTimeOffset.UtcNow
+				Thumbnail = new(args.User.GetAvatarUrl()?.ToString() ?? args.User.DefaultAvatarUrl.ToString())
 			};
 
 			MessageProperties message = new()

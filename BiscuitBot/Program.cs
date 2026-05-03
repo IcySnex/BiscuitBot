@@ -4,6 +4,7 @@ using BiscuitBot.Services;
 using BiscuitBot.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetCord.Gateway;
 using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
 using NetCord.Hosting.Services.ApplicationCommands;
@@ -35,11 +36,15 @@ public class Program
 			HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 			builder.Services.AddSerilog();
+			
+			builder.Services.AddSingleton<ConfigService>();
 
-			builder.Services.AddDiscordGateway();
+			builder.Services.AddDiscordGateway(options =>
+			{
+				options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildUsers;
+			});
 			builder.Services.AddApplicationCommands();
 
-			builder.Services.AddSingleton<ConfigService>();
 			builder.Services.AddGatewayHandler<AutoRoleHandler>();
 			builder.Services.AddGatewayHandler<WelcomeHandler>();
 			builder.Services.AddGatewayHandler<LeaveHandler>();
