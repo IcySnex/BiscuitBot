@@ -42,6 +42,7 @@ public class Program
 			builder.Services.AddSingleton<ConfigService>();
 			builder.Services.AddGatewayHandler<AutoRoleHandler>();
 			builder.Services.AddGatewayHandler<WelcomeHandler>();
+			builder.Services.AddGatewayHandler<LeaveHandler>();
 
 			IHost host = builder.Build();
 
