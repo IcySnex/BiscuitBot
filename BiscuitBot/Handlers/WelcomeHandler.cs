@@ -40,7 +40,7 @@ public class WelcomeHandler(
 			User? inviter = await inviteService.GetInviterAsync(user.GuildId);
 
 			if (user.JoinedAt.HasValue)
-				inviteService.TrackMember(user.GuildId, user.Id, inviter?.Id, user.JoinedAt.Value);
+				inviteService.TrackMember(user.GuildId, user.Id, inviter?.IsBot ?? false, inviter?.Id, inviter?.Username, user.JoinedAt.Value);
 
 			EmbedProperties embed = new()
 			{
@@ -51,7 +51,7 @@ public class WelcomeHandler(
 				[
 					new() { Name = "Account Created:", Value = $"<t:{user.CreatedAt.ToUnixTimeSeconds()}:f>" },
 					new() { Name = "Account Joined:", Value = user.JoinedAt.HasValue ? $"<t:{user.JoinedAt.Value.ToUnixTimeSeconds()}:f>" : "Unknown" },
-					new() { Name = "Invited By:", Value = inviter is not null ? inviter.ToString() : "Unknown" },
+					new() { Name = "Invited By:", Value = inviter is not null ? inviter.IsBot ? inviter.Username : inviter.ToString() : "Unknown" },
 				],
 				Footer = new()
 				{

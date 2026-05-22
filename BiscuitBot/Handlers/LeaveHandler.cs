@@ -42,7 +42,7 @@ public class LeaveHandler(
 				[
 					new() { Name = "Account Created:", Value = $"<t:{args.User.CreatedAt.ToUnixTimeSeconds()}:f>" },
 					new() { Name = "Account Joined:", Value = memberData is not null ? $"<t:{memberData.JoinedAt.ToUnixTimeSeconds()}:f>" : "Unknown" },
-					new() { Name = "Invited By:", Value = memberData is not null ? $"<@{memberData.InviterId}>" : "Unknown" },
+					new() { Name = "Invited By:", Value = memberData is not null ? memberData.InviterIsBot ? memberData.InviterName : $"<@{memberData.InviterId}>" : "Unknown" },
 				],
 				Footer = new()
 				{

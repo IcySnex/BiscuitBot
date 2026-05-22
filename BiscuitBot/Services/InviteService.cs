@@ -224,14 +224,16 @@ public class InviteService(
 	public void TrackMember(
 		ulong guildId,
 		ulong userId,
+		bool inviterIsBot,
 		ulong? inviterId,
+		string? inviterName,
 		DateTimeOffset joinedAt)
 	{
 		ConcurrentDictionary<ulong, MemberData> guildMembers = memberCache.GetOrAdd(
 			guildId,
 			_ => []);
 		
-		guildMembers[userId] = new() { InviterId = inviterId, JoinedAt = joinedAt };
+		guildMembers[userId] = new() { InviterIsBot = inviterIsBot, InviterId = inviterId, InviterName = inviterName, JoinedAt = joinedAt };
 		SaveMemberData();
 	}
 
