@@ -35,7 +35,7 @@ public class WelcomeHandler(
 
 			int memberCount = 0;
 			if (gatewayClient.Cache.Guilds.TryGetValue(user.GuildId, out Guild? guild))
-				memberCount = guild.UserCount;
+				memberCount = guild.Users.Count;
 
 			User? inviter = await inviteService.GetInviterAsync(user.GuildId);
 
