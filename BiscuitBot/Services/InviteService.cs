@@ -16,6 +16,7 @@ public class InviteService(
 	readonly ConcurrentDictionary<ulong, Dictionary<string, int>> inviteCache = new();
 	readonly ConcurrentDictionary<ulong, int> vanityCache = new();
 	readonly ConcurrentDictionary<ulong, ConcurrentDictionary<ulong, MemberData>> memberCache = LoadMemberData(logger);
+	readonly ConcurrentDictionary<ulong, int> memberCounts = new();
 	readonly SemaphoreSlim locker = new(1, 1);
 
 	
@@ -104,8 +105,11 @@ public class InviteService(
 
 	
 	public async Task InitializeAsync(
-		ulong guildId)
+		ulong guildId,
+		int memberCount)
 	{
+		memberCounts[guildId] = memberCount;
+		
 		await locker.WaitAsync();
 		try
 		{
@@ -246,6 +250,8 @@ public class InviteService(
 			if (guildMembers.TryRemove(userId, out _))
 				SaveMemberData();
 		}
+
+		memberCounts.AddOrUpdate(guildId, 0, (_, count) => Math.Max(0, count - 1));
 	}
 
 	public MemberData? GetMemberData(
@@ -257,5 +263,15 @@ public class InviteService(
 			return data;
 
 		return null;
+	}
+
+	public int GetAndIncrementMemberCount(
+		ulong guildId,
+		int fallbackCount)
+	{
+		return memberCounts.AddOrUpdate(
+			guildId,
+			_ => fallbackCount + 1,
+			(_, count) => count + 1);
 	}
 }

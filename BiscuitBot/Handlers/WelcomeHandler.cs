@@ -33,9 +33,11 @@ public class WelcomeHandler(
 		{
 			logger.LogInformation("Sending welcome message for user {UserId} in guild {GuildId}", user.Id, user.GuildId);
 
-			int memberCount = 0;
+			int fallbackCount = 0;
 			if (gatewayClient.Cache.Guilds.TryGetValue(user.GuildId, out Guild? guild))
-				memberCount = guild.Users.Count;
+				fallbackCount = guild.UserCount;
+
+			int memberCount = inviteService.GetAndIncrementMemberCount(user.GuildId, fallbackCount);
 
 			User? inviter = await inviteService.GetInviterAsync(user.GuildId);
 

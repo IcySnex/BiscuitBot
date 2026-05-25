@@ -13,7 +13,7 @@ public class InviteHandler(
 	public async ValueTask HandleAsync(
 		GuildCreateEventArgs args)
 	{
-		await inviteService.InitializeAsync(args.GuildId);
+		await inviteService.InitializeAsync(args.GuildId, args.Guild?.UserCount ?? 0);
 	}
 
 	public ValueTask HandleAsync(
